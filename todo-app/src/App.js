@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import "./App.css";
+import 'bootstrap/dist/css/bootstrap.min.css';
 import TodoContainer from "./components/TodoContainer";
 
 class App extends Component {
