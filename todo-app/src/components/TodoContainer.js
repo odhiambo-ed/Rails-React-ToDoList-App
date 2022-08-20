@@ -57,16 +57,31 @@ class TodoContainer extends Component {
 
     modifyTodo = (e, id) => {
         axios
-            .put(`/api/version1/tdlists/${id}`, { tdlist: { done: e.target.checked } })
+            .put(`/api/v1/todos/${id}`, { todo: { done: e.target.checked } })
             .then((res) => {
-                const tdlistIndex = this.state.tdlists.findIndex(
+                const todoIndex = this.state.todos.findIndex(
                     (x) => x.id === res.data.id
                 );
-                const tdlists = update(this.state.tdlists, {
-                    [tdlistIndex]: { $set: res.data },
+                const todos = update(this.state.todos, {
+                    [todoIndex]: { $set: res.data },
                 });
                 this.setState({
-                    tdlists: tdlists,
+                    todos: todos,
+                });
+            })
+            .catch((error) => console.log(error));
+    };
+
+    removeTodo = (id) => {
+        axios
+            .delete(`/api/v1/todos/${id}`)
+            .then((res) => {
+                const todoIndex = this.state.todos.findIndex((x) => x.id === id);
+                const todos = update(this.state.todos, {
+                    $splice: [[todoIndex, 1]],
+                });
+                this.setState({
+                    todos: todos,
                 });
             })
             .catch((error) => console.log(error));
@@ -97,7 +112,10 @@ class TodoContainer extends Component {
                                         onChange={(e) => this.modifyTodo(e, todo.id)}
                                     />
                                     <label className="itemDisplay">{todo.title}</label>
-                                    <span className="removeItemButton">x</span>
+                                    <span
+                                        className="removeItemButton"
+                                        onClick={(e) => this.removeTodo(todo.id)}
+                                    >x</span>
                                 </li>
                             );
                         })}
