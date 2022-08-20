@@ -23,6 +23,38 @@ class TodoContainer extends Component {
         this.loadtodo();
     }
 
+    newTodo = (e) => {
+        if (e.key === "Enter" && !(e.target.value === "")) {
+            axios
+                .post("/api/v1/todos", { tdlist: { title: e.target.value } })
+                .then((res) => {
+                    const todos = update(this.state.todos, {
+                        $splice: [[0, 0, res.data]],
+                    });
+
+                    this.setState({
+                        todos: todos,
+                        inputValue: "",
+                    });
+
+                    this.state = {
+                        todos: [],
+                        inputValue: "",
+                    };
+
+                    this.setState({
+                        todos: todos,
+                        inputValue: "",
+                    });
+                })
+                .catch((error) => console.log(error));
+        }
+    };
+
+    handleChange = (e) => {
+        this.setState({ inputValue: e.target.value });
+    };
+
     render() {
         return (
             <div>
@@ -32,7 +64,7 @@ class TodoContainer extends Component {
                         type="text"
                         placeholder="Input a New Task and Press Enter"
                         maxLength="75"
-                        onKeyPress={this.createTodo}
+                        onKeyPress={this.newTodo}
                     />
                 </div>
                 <div className="wrapItems">
