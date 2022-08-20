@@ -26,7 +26,7 @@ class TodoContainer extends Component {
     newTodo = (e) => {
         if (e.key === "Enter" && !(e.target.value === "")) {
             axios
-                .post("/api/v1/todos", { tdlist: { title: e.target.value } })
+                .post("/api/v1/todos", { todo: { title: e.target.value } })
                 .then((res) => {
                     const todos = update(this.state.todos, {
                         $splice: [[0, 0, res.data]],
@@ -55,6 +55,23 @@ class TodoContainer extends Component {
         this.setState({ inputValue: e.target.value });
     };
 
+    modifyTodo = (e, id) => {
+        axios
+            .put(`/api/version1/tdlists/${id}`, { tdlist: { done: e.target.checked } })
+            .then((res) => {
+                const tdlistIndex = this.state.tdlists.findIndex(
+                    (x) => x.id === res.data.id
+                );
+                const tdlists = update(this.state.tdlists, {
+                    [tdlistIndex]: { $set: res.data },
+                });
+                this.setState({
+                    tdlists: tdlists,
+                });
+            })
+            .catch((error) => console.log(error));
+    };
+
     render() {
         return (
             <div>
@@ -65,15 +82,21 @@ class TodoContainer extends Component {
                         placeholder="Input a New Task and Press Enter"
                         maxLength="75"
                         onKeyPress={this.newTodo}
+                        value={this.state.inputValue}
+                        onChange={this.handleChange}
                     />
                 </div>
                 <div className="wrapItems">
                     <ul className="listItems">
-                        {this.state.todos.map((tdlist) => {
+                        {this.state.todos.map((todo) => {
                             return (
-                                <li className="item" tdlist={tdlist} key={tdlist.id}>
-                                    <input className="itemCheckbox" type="checkbox" />
-                                    <label className="itemDisplay">{tdlist.title}</label>
+                                <li className="item" todo={todo} key={todo.id}>
+                                    <input
+                                        className="itemCheckbox"
+                                        type="checkbox"
+                                        onChange={(e) => this.modifyTodo(e, todo.id)}
+                                    />
+                                    <label className="itemDisplay">{todo.title}</label>
                                     <span className="removeItemButton">x</span>
                                 </li>
                             );
