@@ -1,6 +1,6 @@
 ![](https://img.shields.io/badge/Microverse-blueviolet)
 
-# Rails Chat App - RCA
+# Rails ToDo List App
 
 This a ToDo List App build on Rails. The App is helpful in planning our daily schedules and generally used to maintain the user day-to-day tasks or list everything that they have to do.
 
